@@ -19,10 +19,10 @@
         <developer>BANDAI NAMCO Studios Inc.</developer>
         <publisher>BANDAI NAMCO Entertainment</publisher>
         <release_date>10 Sep, 2021</release_date>
-        <genre>Anime</genre>
-        <genre>JRPG</genre>
-        <genre>RPG</genre>
-        <genre>Action</genre>
+        <genre uri="Anime" subject="Upcoming_video_games_related_to_anime_and_manga" wiki="List_of_anime_based_on_video_games">Anime</genre>
+        <genre uri="JRPG" wiki="Japanese_role-playing_video_games">JRPG</genre>
+        <genre uri="Role-playing_video_game" wiki="Action_role-playing_game">RPG</genre>
+        <genre uri="Action-adventure_game" wiki="Action_role-playing">Action</genre>
         <genre>Action RPG</genre>
         <cover>https://cdn.cloudflare.steamstatic.com/steam/apps/740130/header.jpg?t=1632698351</cover>
         <links>
@@ -45,10 +45,10 @@
         <developer>24 Entertainment</developer>
         <publisher>NetEase Games Montréal</publisher>
         <release_date>12 Aug, 2021</release_date>
-        <genre>Battle Royale</genre>
-        <genre>Multiplayer</genre>
-        <genre>Martial Arts</genre>
-        <genre>Survival</genre>
+        <genre uri="Battle_royale_game" wiki="Battle_royal" subject="Battle_royale_games">Battle Royale</genre>
+        <genre uri="Multiplayer_video_game">Multiplayer</genre>
+        <genre uri="Martial_arts_video_games">Martial Arts</genre>
+        <genre uri="Survival_game" wiki="Survival_video_games">Survival</genre>
         <cover>https://cdn.cloudflare.steamstatic.com/steam/apps/1203220/header.jpg?t=1632317911</cover>
         <links>
             <video>https://www.youtube.com/embed/rE5hD3eDs1Y</video>
@@ -65,10 +65,10 @@
         <developer>Rockstar North</developer>
         <publisher>Rockstar North</publisher>
         <release_date>14 Apr, 2015</release_date>
-        <genre>Open World</genre>
-        <genre>Action</genre>
-        <genre>Multiplayer</genre>
-        <genre>Automobile Sim</genre>
+        <genre uri="Open_world">Open World</genre>
+        <genre uri="Action-adventure_game" wiki="Action_game">Action</genre>
+        <genre uri="Multiplayer_video_game">Multiplayer</genre>
+        <genre uri="Vehicle_simulation_games">Automobile Sim</genre>
         <cover>https://cdn.cloudflare.steamstatic.com/steam/apps/271590/header.jpg?t=1618856444</cover>
         <links>
             <video>https://www.youtube.com/embed/xQT-O1nMSBU</video>
@@ -89,11 +89,11 @@
         <developer>Hidden Path Entertainment</developer>
         <publisher>Valve</publisher>
         <release_date>22 Aug, 2012</release_date>
-        <genre>FPS</genre>
-        <genre>Shooter</genre>
-        <genre>Multiplayer</genre>
-        <genre>Competitive</genre>
-        <genre>Action</genre>
+        <genre uri="First-person_shooter" wiki="List_of_first-person_shooters">FPS</genre>
+        <genre uri="Shooter_game" wiki="Shooter_video_games">Shooter</genre>
+        <genre uri="Multiplayer_video_game">Multiplayer</genre>
+        <genre uri="Esports" wiki="Esports" subject="Esports_games">Competitive</genre>
+        <genre uri="Action-adventure_game" wiki="Action_game">Action</genre>
         <cover>https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg?t=1631908705</cover>
         <links>
             <image>https://cdn.cloudflare.steamstatic.com/steam/apps/730/ss_118cb022b9a43f70d2e5a2df7427f29088b6b191.600x338.jpg?t=1631908705</image>
@@ -110,9 +110,9 @@
         <developer>Mediatonic</developer>
         <publisher>Mediatonic</publisher>
         <release_date>4 Aug, 2020</release_date>
-        <genre>Family Friendly</genre>
-        <genre>Party Game</genre>
-        <genre>PvP</genre>
+        <genre uri="Family-friendly">Family Friendly</genre>
+        <genre uri="Party_game" wiki="List_of_party_video_games" subject="Party_video_games">Party Game</genre>
+        <genre uri="Player_versus_player">PvP</genre>
         <cover>https://cdn.cloudflare.steamstatic.com/steam/apps/1097150/header.jpg?t=1630144986</cover>
         <links>
             <video>https://www.youtube.com/embed/pqpvBzCgJQM</video>

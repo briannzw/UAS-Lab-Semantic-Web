@@ -1,14 +1,24 @@
 <?php
     require 'vendor/autoload.php';
 
-    //Pagination
-    $dataPerHalaman = 3;
-    $dataCount = 0;                                             //total data
-    $jumlahHalaman = ceil($dataCount / $dataPerHalaman);
-    $halamanAktif = isset($_GET['page']) ? $_GET['page'] : 1;   //page sekarang
-    $indeksAwal = ($dataPerHalaman * ($halamanAktif - 1));
+    $uri_xml = "https://raw.githubusercontent.com/briannzw/UAS-Lab-Semantic-Web/master/xml/PWII2_Tugas%202_201401042.xml";
+    $raw_file = file_get_contents($uri_xml);
+    $xml = simplexml_load_string($raw_file);
 
-    $result = [];                                                 //data yang telah dipisah berdasarkan indeks halaman 1-3, 4-6
+    $sparql = new \EasyRdf\Sparql\Client('https://dbpedia.org/sparql');
+
+    $query = "
+    SELECT DISTINCT ?genre_uri ?genre
+    WHERE{
+        ?game rdf:type dbo:VideoGame.
+        ?game dbo:genre ?genre_uri.
+        ?genre_uri rdfs:label ?genre.
+        FILTER(LANG(?genre) = 'en' || LANG(?genre) = '').
+    }
+    ORDER BY (?genre)
+    ";
+
+    $result = $sparql->query($query);
 ?>
 
 <html>
@@ -34,15 +44,28 @@
 <body>
     <h1 class="title mt-5">Discover Games</h1>
 
-
     <div class="main-container d-flex align-items-center mt-4 py-1 nav-bg">
         <div class="row card-title w-100 ps-4 my-auto">
             <span class="sub-title p-0">Search by Genre</span>
-            <div class="col-auto genre">RPG</div>
-            <div class="col-auto genre">Action RPG</div>
-            <div class="col-auto genre">Shooter</div>
+            <div class="collapse" id="genre-list">
+            <div class="d-flex flex-wrap">
+            <?php   foreach($result as $row) :
+                        $detail = [
+                            'genre'=> !empty(($row->genre)->getValue()) ? $row->genre : "",
+                            'genre_uri'=> !($row->genre_uri)->isBNode() ? $row->genre_uri : "",
+                        ];
+                        
+                        $detail["genre_uri"] = str_replace("http://dbpedia.org/resource/", "", $detail["genre_uri"]);
+            ?>
+                <div class="col-auto genre mb-1" uri="<?= $detail['genre_uri'] ?>"><?= $detail['genre'] ?></div>
+            <?php   endforeach; ?>
+            </div>
+            </div>
+            <div class="d-flex flex-wrap p-0">
+                <a class="btn genre" data-bs-toggle="collapse" data-bs-target="#genre-list">Expand</a>
+            </div>
         </div>
-        <div class="me-2">
+        <div class="ms-2 me-2">
             <form class="search_bar d-flex my-auto">
                 <input class="search_input form-control me-2" type="text" placeholder="search" aria-label="">
                 <a id="#search-button" class="search_icon"><i class="fas fa-search"></i></a>
@@ -61,65 +84,69 @@
     </div>
 
     <?php
-    foreach ($result as $item) :
+    $game_count = count($xml->children());
+    $i = 0;
+    foreach ($xml->children() as $game) :
+        $i++;
     ?>
+    <?php if($i == 1) : ?>
+        <div class="card mb-5" style="display:flex; position:relative; left:10rem; margin-right:20rem;">
+    <?php else : ?>
         <div class="card my-5" style="display:flex; position:relative; left:10rem; margin-right:20rem;">
+    <?php endif; ?>
             <div class="row no-gutters">
                 <div class="col">
                     <!--awal carousel-->
                     <div id="Carousel-<?= $i ?>" class="carousel slide carousel-fade" data-bs-ride="carousel" data-pause="hover">
                         <div class="carousel-indicators">
-                            <?php /*<xsl:for-each select="links/*">
-                                <xsl:choose>
-                                    <xsl:when test="position()=1">
-                                        <button type="button" data-bs-target="#Carousel-{$main-pos}" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <button type="button" data-bs-target="#Carousel-{$main-pos}" data-bs-slide-to="{position()-1}" aria-label="Slide {position()}"></button>
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:for-each>
-                            */ ?>
+                        <?php $link_count = count($game->links->children());
+                                for($j = 1; $j <= $link_count; $j++) :
+                                    if($j == 1) :
+                        ?>
+                                        <button type="button" data-bs-target="#Carousel-<?= $i ?>" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                        <?php       else : ?>
+                                        <button type="button" data-bs-target="#Carousel-<?= $i ?>" data-bs-slide-to="<?= ($j - 1) ?>" aria-label="Slide <?= $j ?>"></button>
+                        <?php       endif; ?>
+                        <?php   endfor; ?>
                         </div>
                         <div class="carousel-inner ratio ratio-16x9">
-                            <?php /*<xsl:for-each select="links">
-                                <xsl:variable name="video-count" select="count(video)" />
-                                <xsl:for-each select="video">
-                                    <xsl:choose>
-                                        <xsl:when test="position()='1'">
+                            <?php $j = 0; 
+                                foreach($game->links as $link) : 
+                                    foreach($link->video as $video) : 
+                                        $j++;
+                                        if($j == 1) : 
+                            ?>
                                             <div class="carousel-item active">
-                                                <iframe src="{.}" width="100%" height="100%"></iframe>
+                                                <iframe src="<?= $video ?>" width="100%" height="100%"></iframe>
                                             </div>
-                                        </xsl:when>
-                                        <xsl:otherwise>
+                            <?php       else : ?>
                                             <div class="carousel-item">
-                                                <iframe src="{.}" width="100%" height="100%"></iframe>
+                                                <iframe src="<?= $video ?>" width="100%" height="100%"></iframe>
                                             </div>
-                                        </xsl:otherwise>
-                                    </xsl:choose>
-                                </xsl:for-each>
-                                <xsl:for-each select="image">
-                                    <xsl:choose>
-                                        <xsl:when test="position()='1' and $video-count = 0">
+                            <?php       endif;      ?>
+                            <?php   endforeach; ?>
+                            <?php   $video_count = $j;
+                                    $j = 0;
+                                    foreach($link->image as $image) : 
+                                        $j++;
+                                        if(($j == 1) && ($video_count == 0)) : 
+                            ?>
                                             <div class="carousel-item active">
-                                                <img src="{.}" class="d-block w-100" alt="..." />
+                                                <img src="<?= $image ?>" class="d-block w-100" alt="..." />
                                             </div>
-                                        </xsl:when>
-                                        <xsl:otherwise>
+                            <?php       else : ?>
                                             <div class="carousel-item">
-                                                <img src="{.}" class="d-block w-100" alt="..." />
+                                                <img src="<?= $image ?>" class="d-block w-100" alt="..." />
                                             </div>
-                                        </xsl:otherwise>
-                                    </xsl:choose>
-                                </xsl:for-each>
-                            </xsl:for-each>
-                            */ ?>
+                            <?php       endif; ?>
+                            <?php   endforeach; ?>
+                        <?php   endforeach; ?>
                         </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#Carousel-{position()}" data-bs-slide="prev">
+                        <button class="carousel-control-prev" type="button" data-bs-target="#Carousel-<?= $i ?>" data-bs-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                             <span class="visually-hidden">Previous</span>
                         </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#Carousel-{position()}" data-bs-slide="next">
+                        <button class="carousel-control-next" type="button" data-bs-target="#Carousel-<?= $i ?>" data-bs-slide="next">
                             <span class="carousel-control-next-icon" aria-hidden="true"></span>
                             <span class="visually-hidden">Next</span>
                         </button>
@@ -128,28 +155,28 @@
                 </div>
                 <div class="col-md-4">
                     <div class="card-body p-0">
-                        <img src="{cover}" class="d-block w-100" alt="..." />
+                        <img src="<?= $game->cover ?>" class="d-block w-100" alt="..." />
                         <h5 class="card-title mt-2">
-                            <xsl:value-of select="name" />
+                            <?= $game->name ?>
                         </h5>
                         <p class="card-text text-muted ">RELEASE DATE: <span class="txt-gray">
-                                <xsl:value-of select="release_date" />
+                                <?= $game->release_date ?>
                             </span></p>
-                        <xsl:for-each select="developer">
+                        <?php foreach($game->developer as $developer) : ?>
                             <p class="card-text text-muted m-0">DEVELOPER: &#160;&#160;&#160;&#160;&#160;<span class="txt-gray">
-                                    <xsl:value-of select="." />
+                                    <?= $developer ?>
                                 </span></p>
-                        </xsl:for-each>
+                        <?php endforeach; ?>
                         <p class="card-text text-muted">PUBLISHER: &#160;&#160;&#160;&#160;&#160;&#160;<span class="txt-gray">
-                                <xsl:value-of select="publisher" />
+                                <?= $game->publisher ?>
                             </span></p>
                         <div class="card-text">
                             <div class="row mx-0">
-                                <xsl:for-each select="genre">
-                                    <div class="col-auto genre">
-                                        <xsl:value-of select="." />
+                                <?php foreach($game->genre as $genre) : ?>
+                                    <div class="col-auto genre mb-1" uri=<?= $genre["uri"] ?> wiki=<?php if($genre["wiki"]) echo $genre["wiki"] ?> subject=<?php if($genre["subject"]) echo $genre["subject"] ?>>
+                                        <?= $genre ?>
                                     </div>
-                                </xsl:for-each>
+                                <?php endforeach; ?>
                             </div>
                         </div>
                     </div>
@@ -157,55 +184,8 @@
             </div>
         </div>
     <?php endforeach; ?>
-
-    <!--Pagination-->
-    <?php if (count($result) > 0) : ?><!--
-        <nav>
-            <ul class="pagination justify-content-center">
-                <?php if ($halamanAktif <= 1) : ?>
-                    <li class="page-item disabled">
-                        <span class="page-link">&laquo;</span>
-                    </li>
-                <?php else : ?>
-                    <li class="page-item">
-                        <a class="page-link" href="?page=<?= ($halamanAktif - 1) ?>">&laquo;</a>
-                    </li>
-                <?php endif; ?>
-
-                <?php for ($i = 1; $i <= $jumlahHalaman; $i++) : ?>
-                    <?php if ($i == $halamanAktif) : ?>
-                        <li class="page-item active">
-                            <span class="page-link">
-                                <?= $halamanAktif ?>
-                            </span>
-                        </li>
-                    <?php else : ?>
-                        <li class="page-item">
-                            <a class="page-link" href="?page=<?php echo $i;
-                                                                if (isset($_GET['cari'])) {
-                                                                    echo "&keyword=" . $_GET['keyword'] . "&tipe_bangunan=" . $_GET['tipe_bangunan'] . "&cari=true";
-                                                                }
-                                                                ?>"> <?php echo $i; ?> </a>
-                        </li>
-                    <?php endif; ?>
-                <?php endfor; ?>
-                <?php if ($halamanAktif < $jumlahHalaman) : ?>
-                    <li class="page-item">
-                        <a class="page-link" href="?page=<?php echo $halamanAktif + 1;
-                                                            if (isset($_GET['cari'])) {
-                                                                echo "&keyword=" . $_GET['keyword'] . "&tipe_bangunan=" . $_GET['tipe_bangunan'] . "&cari=true";
-                                                            }
-                                                            ?>">&raquo;</a>
-                    </li>
-                <?php else : ?>
-                    <li class="page-item disabled">
-                        <span class="page-link">&raquo;</span>
-                    </li>
-                <?php endif; ?>-->
-            <?php endif; ?>
-            </ul>
-        </nav>
-    <!-- Akhir Pagination -->
+    
+    <div class="container pb-5"></div>
 
     <!-- Searchbar Script -->
     <script>
@@ -231,9 +211,7 @@
                         }
                         else {
                             $("#suggestion-box").html("");
-                            if($('#dropdown-toggle').hasClass('show')){
-                                $('#dropdown-toggle').trigger('click.bs.dropdown');
-                            }
+                            $('.dropdown').removeClass('open');
                         }
                 });
                 $(".search_input").focus(function() {
@@ -245,9 +223,20 @@
                     }
                 });
                 $(".search_input").focusout(function() {
-                    if($('#dropdown-toggle').hasClass('show')){
-                        $('#dropdown-toggle').trigger('click.bs.dropdown');
-                    }
+                        $('.dropdown').removeClass('open');
+                });
+                $(".genre").on("click", function(){
+                    if($(this).hasClass("btn")) return;
+                    $.redirect('result.php', {
+                            title: this.innerText,
+                            uri: this.getAttribute("uri"),
+                            wiki: this.getAttribute("wiki"),
+                            subject: this.getAttribute("subject")
+                    });
+                });
+                $(".btn.genre").on("click", function(){
+                    if(this.innerText == "Expand") this.innerText = "Collapse";
+                    else this.innerText = "Expand";
                 });
             });
         });    

@@ -23,7 +23,7 @@
         <genre uri="JRPG" wiki="Japanese_role-playing_video_games">JRPG</genre>
         <genre uri="Role-playing_video_game" wiki="Action_role-playing_game">RPG</genre>
         <genre uri="Action-adventure_game" wiki="Action_role-playing">Action</genre>
-        <genre>Action RPG</genre>
+        <genre uri="Action_role-playing">Action RPG</genre>
         <cover>https://cdn.cloudflare.steamstatic.com/steam/apps/740130/header.jpg?t=1632698351</cover>
         <links>
             <video>https://www.youtube.com/embed/2g3XPcVSX_A</video>

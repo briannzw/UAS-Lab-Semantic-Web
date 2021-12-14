@@ -25,12 +25,12 @@
             if($data->Label != ""){
                 $i++;
                 $uri = str_replace("http://dbpedia.org/resource/", "", $data->URI);
-                echo "<li class='dropdown-item' id='data_list_item_".$i."' URI='".$uri."'>".$data->Label."</li>";
+                echo "<li class='dropdown-item' id='data_list_item_".$i."' uri='".$uri."'>".$data->Label."</li>";
     
                 echo "<script>
                 $('#data_list_item_".$i."').on('click', function(){
                     if($('#data_list_item_".$i."').attr('URI') != ''){
-                        $.redirect('info.php', { 'URI' : $('#data_list_item_".$i."').attr('URI') });
+                        $.redirect('result.php', { 'search_uri' : $('#data_list_item_".$i."').attr('uri') });
                     }
                 });
                 </script>";
